@@ -35,22 +35,24 @@ public class MainCamera : MonoBehaviour {
                 }
             }
         }
+            
 
-        // поворот камеры
-		
-        rotX += Input.GetAxis("Mouse X") * sensitiveX;
-        rotY += Input.GetAxis("Mouse Y") * sensitiveY;
+        if (Input.GetMouseButton(1))  // поворот камеры
+        {
+            rotX += Input.GetAxis("Mouse X") * sensitiveX;
+            rotY += Input.GetAxis("Mouse Y") * sensitiveY;
 
-        rotX = rotX % 360;
-        rotY = rotY % 360;
+            rotX = rotX % 360;
+            rotY = rotY % 360;
 
-        rotX = Mathf.Clamp(rotX, minX, maxX);
-        rotY = Mathf.Clamp(rotY, minY, maxY);
+            rotX = Mathf.Clamp(rotX, minX, maxX);
+            rotY = Mathf.Clamp(rotY, minY, maxY);
 
-        Quaternion xquat = Quaternion.AngleAxis(rotX, Vector3.up);
-        Quaternion yquat = Quaternion.AngleAxis(rotY, Vector3.left);
+            Quaternion xquat = Quaternion.AngleAxis(rotX, Vector3.up);
+            Quaternion yquat = Quaternion.AngleAxis(rotY, Vector3.left);
 
-        transform.localRotation = cur_rot * xquat * yquat;
+            transform.localRotation = cur_rot * xquat * yquat;
+        }
 
         // движение
 
