@@ -55,6 +55,7 @@
   <ItemGroup>
      <Compile Include="Assets\Scripts\MainCamera.cs" />
      <Compile Include="Assets\Scripts\PlayerAgent.cs" />
+     <Compile Include="Assets\Scripts\ScrollContent.cs" />
  <Reference Include="Unity.TextMeshPro.Editor">
  <HintPath>C:/Users/Петя/Documents/PTHSim/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
  </Reference>
