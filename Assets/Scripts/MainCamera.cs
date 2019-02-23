@@ -1,10 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class MainCamera : MonoBehaviour {
 
     public LayerMask layer;
+    public GameObject scbar;
     public float flySpeed = 0.5f;
     public float sensitiveX = 1f;
     public float sensitiveY = 1f;
@@ -13,6 +16,9 @@ public class MainCamera : MonoBehaviour {
     public float minY = -60;
     public float maxY = 60;
     private float rotX = 0f, rotY = 0f;
+    public float[] floor_heights = new float[] {12f, 24f};
+    public int cur_floor = 0, floor_offset = 3;
+    public GameObject textOfFlat;
 
     private Quaternion cur_rot;
 	// Use this for initialization
@@ -22,16 +28,18 @@ public class MainCamera : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (Input.GetMouseButton(0))
+        
+        if (Input.GetMouseButton(0) && !EventSystem.current.IsPointerOverGameObject())
         {
             Ray ray = GetComponent<Camera>().ScreenPointToRay(Input.mousePosition); // настраиваем луч из камеры на мышку
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit, Mathf.Infinity, layer)) // пускаем луч и находим координаты попадания
             {
+                
                 var objs = GameObject.FindGameObjectsWithTag("Player");
-                for (int i = 0; i < objs.Length; i++)
+                for (int i = 0; i < scbar.GetComponent<ScrollBarScript>().cur_n; i++)
                 {
-                    objs[i].GetComponent<PlayerAgent>().target = hit.point; // ставим всем (пока) чубзиками идти туда
+                    objs[i].GetComponent<PlayerAgent>().target = hit.point; // двигаем
                 }
             }
         }
@@ -67,5 +75,25 @@ public class MainCamera : MonoBehaviour {
             Vector3 pos = transform.right * flySpeed * Input.GetAxis("Horizontal");
             transform.position += new Vector3(pos.x, 0, pos.z);
         }
+    }
+
+    private void updateFloor()
+    {
+        textOfFlat.GetComponent<Text>().text = (cur_floor + floor_offset).ToString() + " этаж";
+        transform.position = new Vector3(transform.position.x, floor_heights[cur_floor], transform.position.z);
+    }
+
+    public void goUpFloor()
+    {
+        if (cur_floor < floor_heights.Length - 1)
+            cur_floor++;
+        updateFloor();
+    }
+
+    public void goDownFloor()
+    {
+        if (cur_floor > 0)
+            cur_floor--;
+        updateFloor();
     }
 }
