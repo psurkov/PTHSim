@@ -10,7 +10,7 @@ public class PlayerAgent : MonoBehaviour {
     private bool isIdle = true;
     private float idle_time = 0f;
     private float timeBeforePassiveMove = 3f;
-    private float needLen2Target = 1;
+    private float needLen2Target = 0.6f;
 
 
 	// Use this for initialization

@@ -16,7 +16,8 @@ public class MainCamera : MonoBehaviour {
     public float minY = -60;
     public float maxY = 60;
     private float rotX = 0f, rotY = 0f;
-    public float[] floor_heights = new float[] {12f, 24f};
+    public float height_form_floor = 20f;
+    public GameObject[] floor_objects = new GameObject[2];
     public int cur_floor = 0, floor_offset = 3;
     public GameObject textOfFlat;
 
@@ -24,11 +25,15 @@ public class MainCamera : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         cur_rot = transform.localRotation;
+        updateFloor();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        
+
+        var players = GameObject.FindGameObjectsWithTag("Player");
+        for (int i = 0; i < players.Length; i++)
+            players[i].GetComponent<MeshRenderer>().enabled = 5 > players[i].transform.position.y - floor_objects[cur_floor].transform.position.y;
         if (Input.GetMouseButton(0) && !EventSystem.current.IsPointerOverGameObject())
         {
             Ray ray = GetComponent<Camera>().ScreenPointToRay(Input.mousePosition); // настраиваем луч из камеры на мышку
@@ -36,10 +41,9 @@ public class MainCamera : MonoBehaviour {
             if (Physics.Raycast(ray, out hit, Mathf.Infinity, layer)) // пускаем луч и находим координаты попадания
             {
                 
-                var objs = GameObject.FindGameObjectsWithTag("Player");
                 for (int i = 0; i < scbar.GetComponent<ScrollBarScript>().cur_n; i++)
                 {
-                    objs[i].GetComponent<PlayerAgent>().target = hit.point; // двигаем
+                    players[i].GetComponent<PlayerAgent>().target = hit.point; // двигаем
                 }
             }
         }
@@ -80,12 +84,14 @@ public class MainCamera : MonoBehaviour {
     private void updateFloor()
     {
         textOfFlat.GetComponent<Text>().text = (cur_floor + floor_offset).ToString() + " этаж";
-        transform.position = new Vector3(transform.position.x, floor_heights[cur_floor], transform.position.z);
+        transform.position = new Vector3(transform.position.x, floor_objects[cur_floor].transform.position.y + height_form_floor, transform.position.z);
+        for (int i = 0; i < floor_objects.Length; i++)
+            floor_objects[i].SetActive(i <= cur_floor);
     }
 
     public void goUpFloor()
     {
-        if (cur_floor < floor_heights.Length - 1)
+        if (cur_floor < floor_objects.Length - 1)
             cur_floor++;
         updateFloor();
     }
